@@ -1,0 +1,24 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "l2d01.u.moc3",
+    "Textures": [
+      "textures/texture_00.png"
+    ],
+    "Physics": "l2d01.u.physics3.json",
+    "Motions": {
+      "Idle":[
+		 {"File":"motions/Mgirl10_tingge.motion3.json"},
+		 {"File":"Mgirl10_stand_c.motion3.json"}
+		],
+		"TapBody":[
+			{"File":"motions/Mgirl10_haixiu_a.motion3.json"},
+			{"File":"motions/Mgirl10_shihao_a.motion3.json"}
+		],
+		"TapHead":[
+			{"File":"motions/Mgirl10_motouyihuo.motion3.json"},
+			{"File":"motions/Mgirl10_zeguai_a.motion3.json"}
+		]
+    }
+  }
+}
