@@ -1,0 +1,6 @@
+#排除package-lock.json文件
+package-lock.json
+/src/main/webapp/resources
+/src/main/resources/static/
+**/node_modules/*
+/Samples/TypeScript/Demo/dist
