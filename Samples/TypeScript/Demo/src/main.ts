@@ -6,20 +6,27 @@
  */
 
 import { LAppDelegate } from './lappdelegate';
+//模型文件等信息的配置类
+import { ResourceInfo } from './lappdefine';
 
 /**
- * ブラウザロード後の処理
+ * 开始加载live2d
+ * @returns void
  */
-window.onload = (): void => {
+function start() {
   // create the application instance
   if (LAppDelegate.getInstance().initialize() == false) {
-    return;
+    return
   }
 
   LAppDelegate.getInstance().run();
-};
 
-/**
- * 終了時の処理
- */
-window.onbeforeunload = (): void => LAppDelegate.releaseInstance();
+}
+ /**
+  * 只是释放live2d的渲染程序，并不会直接在页面中关闭live2d
+  */
+function stop() {
+  LAppDelegate.releaseInstance();
+}
+ 
+module.exports = {start,stop,ResourceInfo}

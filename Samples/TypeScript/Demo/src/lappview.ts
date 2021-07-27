@@ -116,7 +116,7 @@ export class LAppView {
     const height: number = canvas.height;
 
     const textureManager = LAppDelegate.getInstance().getTextureManager();
-    const resourcesPath = LAppDefine.ResourcesPath;
+    const resourcesPath = LAppDefine.ResourceInfo.resourcesPath;
 
     
 

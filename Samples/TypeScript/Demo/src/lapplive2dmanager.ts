@@ -30,6 +30,8 @@ export class LAppLive2DManager {
    *
    * @return クラスのインスタンス
    */
+ 
+
   public static getInstance(): LAppLive2DManager {
     if (s_instance == null) {
       s_instance = new LAppLive2DManager();
@@ -182,7 +184,7 @@ export class LAppLive2DManager {
    * サンプルアプリケーションではモデルセットの切り替えを行う。
    */
   public nextScene(): void {
-    const no: number = (this._sceneIndex + 1) % LAppDefine.ModelDirSize;
+    const no: number = (this._sceneIndex + 1) % LAppDefine.ResourceInfo.moduleDirNames.length;
     this.changeScene(no);
   }
 
@@ -190,9 +192,9 @@ export class LAppLive2DManager {
   public randomScene(): void
   {
       //设置随机的模型选项
-      let randomNum= Math.random()*(LAppDefine.ModelDirSize+1)//取值范围[0,size+1)包含小数
+      let randomNum= Math.random()*(LAppDefine.ResourceInfo.moduleDirNames.length+1)//取值范围[0,size+1)包含小数
       //转为整数后再次取余防止出现数组越界问题
-      let indexOfModel = Math.floor(randomNum)%LAppDefine.ModelDirSize
+      let indexOfModel = Math.floor(randomNum)%LAppDefine.ResourceInfo.moduleDirNames.length
       this.changeScene(indexOfModel);
   }
 
@@ -210,9 +212,9 @@ export class LAppLive2DManager {
     // ModelDir[]に保持したディレクトリ名から
     // model3.jsonのパスを決定する。
     // ディレクトリ名とmodel3.jsonの名前を一致させておくこと。
-    const model: string = LAppDefine.ModelDir[index];
-    const modelPath: string = LAppDefine.ResourcesPath + model + '/';
-    let modelJsonName: string = LAppDefine.ModelDir[index];
+    const model: string = LAppDefine.ResourceInfo.moduleDirNames[index];
+    const modelPath: string = LAppDefine.ResourceInfo.resourcesPath + model + '/';
+    let modelJsonName: string = LAppDefine.ResourceInfo.moduleDirNames[index];
     modelJsonName += '.model3.json';
 
     this.releaseAllModel();

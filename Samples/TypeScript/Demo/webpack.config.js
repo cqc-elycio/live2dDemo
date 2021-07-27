@@ -6,7 +6,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/dist/'
+    publicPath: '/dist/',
+    library: 'live2dLoader',
+    libraryTarget:'umd'
   },
   resolve: {
     extensions: ['.ts', '.js'],

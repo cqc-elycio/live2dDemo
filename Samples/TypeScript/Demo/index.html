@@ -23,6 +23,11 @@
   <script src = "./dist/bundle.js"></script>
   <script type="text/javascript" src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
   <script type="text/javascript">
+    var loader  = live2dLoader
+    loader.ResourceInfo.resourcesPath='../../Resources/'
+    loader.ResourceInfo.moduleDirNames=['a','b']
+    loader.start();
+    console.log(loader)
    //这个路径时message.json的存在目录
       var message_Path = './live2d/'
   </script>
