@@ -1,0 +1,4 @@
+{
+  "typescript.tsdk": "./Samples/TypeScript/Demo/node_modules/typescript/lib",
+  "git.ignoreLimitWarning": true
+}
