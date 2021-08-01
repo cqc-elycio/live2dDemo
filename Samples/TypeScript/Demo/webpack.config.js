@@ -2,11 +2,15 @@
 var path = require('path');
 
 module.exports = {
+  mode: 'production',
+  target: ['web', 'es5'],
   entry: './src/main.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/dist/'
+    publicPath: '/dist/',
+    library: 'live2dLoader',
+    libraryTarget:'umd'
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -28,7 +32,7 @@ module.exports = {
     watchContentBase: true,
     inline: true,
     hot: true,
-    port: 5000,
+    port: 8082,
     host: '0.0.0.0',
     compress: true,
     useLocalIp: true,

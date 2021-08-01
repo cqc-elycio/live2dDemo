@@ -149,6 +149,10 @@ declare namespace Live2DCubismCore {
         defaultValues: Float32Array;
         /** Parameter values. */
         values: Float32Array;
+        /** Number of key values of each parameter. */
+        keyCounts: Int32Array;
+        /** Key values of each parameter. */
+        keyValues: Array<Float32Array>;
         /**
          * Initializes instance.
          *

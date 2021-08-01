@@ -5,16 +5,13 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import {
-  Live2DCubismFramework as live2dcubismframework,
-  Option as Csm_Option
-} from '@framework/live2dcubismframework';
-import Csm_CubismFramework = live2dcubismframework.CubismFramework;
-import { LAppView } from './lappview';
+import { CubismFramework, Option } from '@framework/live2dcubismframework';
+
+import * as LAppDefine from './lappdefine';
+import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';
 import { LAppTextureManager } from './lapptexturemanager';
-import { LAppLive2DManager } from './lapplive2dmanager';
-import * as LAppDefine from './lappdefine';
+import { LAppView } from './lappview';
 
 export let canvas: HTMLCanvasElement = null;
 export let s_instance: LAppDelegate = null;
@@ -55,72 +52,9 @@ export class LAppDelegate {
    * APPに必要な物を初期化する。
    */
   public initialize(): boolean {
-     // キャンバスの取得
-        //这里时获取html页面里的canvas元素的，id值需要根据实际情况变动
-        canvas = <HTMLCanvasElement>document.getElementById("live2d");
-        //添加全局鼠标移动事件监控
-         //页面鼠标移动事件监听，抛弃SDK提供的点击移动事件
-         document.addEventListener("mousemove",function(e){
-          
-            if(!LAppDelegate.getInstance()._view)
-            {
-                LAppPal.printMessage("view notfound");
-                return;
-            }
-            //(<Element>e.target).getBoundingClientRect();
-            //这里代码改了一点
-            //之前我是使用documents对象来获取canvas，其实已经有全局变量了，这里也可以直接用
-            let rect =  canvas.getBoundingClientRect();
-            let posX: number = e.clientX -rect.left;
-            let posY: number = e.clientY - rect.top ;
-           // console.log("onMouseMoved: gate文件中posY值为： 【"+posY+"】  canvas的top距离为："+rect.top);
-            LAppDelegate.getInstance()._view.onTouchesMoved(posX, posY);
-            
-        },false);
-
-
-        //在这里加上鼠标离开浏览器后，一切归位
-        document.addEventListener("mouseout",function(e){
-            //鼠标离开document后，将其位置置为（0，0）  
-            let live2DManager: LAppLive2DManager = LAppLive2DManager.getInstance();
-            live2DManager.onDrag(0.0, 0.0);
-        },false);
-
-
-        //添加鼠标点击事件
-        //监听cavas的鼠标点击事件,如果你希望在鼠标点击页面元素后，
-        //看板娘不在看向鼠标，直到你再次移动鼠标，把监听事件对象从canvas换成document
-        //现在演示documen对象上的点击事件
-        canvas.addEventListener("click",function(e){
-          
-            if(!LAppDelegate.getInstance()._view)
-            {
-                LAppPal.printMessage("view notfound");
-                return;
-            }
-            
-            let rect =  canvas.getBoundingClientRect();
-            let posX: number = e.clientX -rect.left;
-            let posY: number = e.clientY - rect.top ;
-           // console.log("onMouseMoved: gate文件中posY值为： 【"+posY+"】  canvas的top距离为："+rect.top);
-           //其实就是照抄上面的，把下面两行代码加上
-            LAppDelegate.getInstance()._view.onTouchesBegan(posX, posY);
-            LAppDelegate.getInstance()._view.onTouchesEnded(posX, posY);
-        },false);
-
-        
-        /**
-         * 手动切换人物模型
-         */
-        
-        let nextBtn = document.getElementById("nextModel");
-        if(nextBtn!=null){
-          nextBtn.addEventListener("click",function(){
-          let manager =LAppLive2DManager.getInstance();
-          manager.nextScene();
-        },false);
-        
-      }
+    // キャンバスの作成
+    canvas = <HTMLCanvasElement>document.getElementById(LAppDefine.resourcesConfig.getCanvasId());
+  
     // glコンテキストを初期化
     // @ts-ignore
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -136,7 +70,8 @@ export class LAppDelegate {
       return false;
     }
 
-  
+    // キャンバスを DOM に追加
+    // document.body.appendChild(canvas);
 
     if (!frameBuffer) {
       frameBuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
@@ -145,16 +80,46 @@ export class LAppDelegate {
     // 透過設定
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+/*
+    const supportTouch: boolean = 'ontouchend' in document;
 
-    const supportTouch: boolean = 'ontouchend' in canvas;
+     if (supportTouch) {
+    // タッチ関連コールバック関数登録
+    document.ontouchstart = onTouchBegan;
+     document.ontouchmove = onTouchMoved;
+     document.ontouchend = onTouchEnded;
+    //document.ontouchend = onTouchEnded;
+    //canvas.ontouchcancel = onTouchCancel;
+     } else {
+       */
+    
+    // マウス関連コールバック関数登録
+    //只能在canvas的事件上调用on*Ended()方法，不然会影响人物的点击效果
+    //onmousemove方法只能在onmousedown和onmouseup之间调用，不然没有效果
+    //document.onmousemove = onMouseMoved;
+    canvas.onmouseup = onClickEnded;
+    document.addEventListener("mousemove", function (e) {
+      if (!LAppDelegate.getInstance()._view) {
+        LAppPal.printMessage("view notfound");
+        return;
+      }
+      //(<Element>e.target).getBoundingClientRect();
+      //这里代码改了一点
+      //之前我是使用documents对象来获取canvas，其实已经有全局变量了，这里也可以直接用
+      let rect = canvas.getBoundingClientRect();
+      let posX: number = e.clientX - rect.left;
+      let posY: number = e.clientY - rect.top;
+      // console.log("onMouseMoved: gate文件中posY值为： 【"+posY+"】  canvas的top距离为："+rect.top);
+      LAppDelegate.getInstance()._view.onTouchesMoved(posX, posY);
+    }, false);
+    // }
 
-    if (supportTouch) {
-      // タッチ関連コールバック関数登録
-      canvas.ontouchstart = onTouchBegan;
-      canvas.ontouchmove = onTouchMoved;
-      canvas.ontouchend = onTouchEnded;
-      canvas.ontouchcancel = onTouchCancel;
-    } 
+    //在这里加上鼠标离开浏览器后，一切归位
+    document.addEventListener("mouseout", function (e) {
+      //鼠标离开document后，将其位置置为（0，0）  
+      let live2DManager: LAppLive2DManager = LAppLive2DManager.getInstance();
+      live2DManager.onDrag(0.0, 0.0);
+    }, false);
 
     // AppViewの初期化
     this._view.initialize();
@@ -165,9 +130,14 @@ export class LAppDelegate {
     return true;
   }
 
-
-
-
+  /**
+   * Resize canvas and re-initialize view.
+   */
+  public onResize(): void {
+    this._resizeCanvas();
+    this._view.initialize();
+    this._view.initializeSprite();
+  }
 
   /**
    * 解放する。
@@ -175,15 +145,13 @@ export class LAppDelegate {
   public release(): void {
     this._textureManager.release();
     this._textureManager = null;
-
     this._view.release();
     this._view = null;
 
     // リソースを解放
     LAppLive2DManager.releaseInstance();
-
     // Cubism SDKの解放
-    Csm_CubismFramework.dispose();
+    CubismFramework.dispose();
   }
 
   /**
@@ -309,7 +277,7 @@ export class LAppDelegate {
     this._mouseY = 0.0;
     this._isEnd = false;
 
-    this._cubismOption = new Csm_Option();
+    this._cubismOption = new Option();
     this._view = new LAppView();
     this._textureManager = new LAppTextureManager();
   }
@@ -321,10 +289,10 @@ export class LAppDelegate {
     // setup cubism
     this._cubismOption.logFunction = LAppPal.printMessage;
     this._cubismOption.loggingLevel = LAppDefine.CubismLoggingLevel;
-    Csm_CubismFramework.startUp(this._cubismOption);
+    CubismFramework.startUp(this._cubismOption);
 
     // initialize cubism
-    Csm_CubismFramework.initialize();
+    CubismFramework.initialize();
 
     // load model
     LAppLive2DManager.getInstance();
@@ -334,7 +302,15 @@ export class LAppDelegate {
     this._view.initializeSprite();
   }
 
-  _cubismOption: Csm_Option; // Cubism SDK Option
+  /**
+   * Resize the canvas to fill the screen.
+   */
+  private _resizeCanvas(): void {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  _cubismOption: Option; // Cubism SDK Option
   _view: LAppView; // View情報
   _captured: boolean; // クリックしているか
   _mouseX: number; // マウスX座標
@@ -372,7 +348,7 @@ function onMouseMoved(e: MouseEvent): void {
     return;
   }
 
-  const rect = (e.target as Element).getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
   const posX: number = e.clientX - rect.left;
   const posY: number = e.clientY - rect.top;
 
@@ -389,10 +365,10 @@ function onClickEnded(e: MouseEvent): void {
     return;
   }
 
-  const rect = (e.target as Element).getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
   const posX: number = e.clientX - rect.left;
   const posY: number = e.clientY - rect.top;
-
+  // LAppDelegate.getInstance()._view.onTouchesBegan(posX, posY);
   LAppDelegate.getInstance()._view.onTouchesEnded(posX, posY);
 }
 
@@ -426,7 +402,7 @@ function onTouchMoved(e: TouchEvent): void {
     return;
   }
 
-  const rect = (e.target as Element).getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
 
   const posX = e.changedTouches[0].clientX - rect.left;
   const posY = e.changedTouches[0].clientY - rect.top;
@@ -445,7 +421,7 @@ function onTouchEnded(e: TouchEvent): void {
     return;
   }
 
-  const rect = (e.target as Element).getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
 
   const posX = e.changedTouches[0].clientX - rect.left;
   const posY = e.changedTouches[0].clientY - rect.top;
@@ -464,7 +440,7 @@ function onTouchCancel(e: TouchEvent): void {
     return;
   }
 
-  const rect = (e.target as Element).getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
 
   const posX = e.changedTouches[0].clientX - rect.left;
   const posY = e.changedTouches[0].clientY - rect.top;
