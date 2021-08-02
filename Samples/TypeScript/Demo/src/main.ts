@@ -7,7 +7,7 @@
 
 import { LAppDelegate } from './lappdelegate';
 import { resourcesConfig} from './lappdefine';
-import { MocMapper} from './MocMapper'
+import { LAppLive2DManager} from './lapplive2dmanager'
 /**
  * ブラウザロード後の処理
  */
@@ -33,28 +33,7 @@ window.onresize = () => {
   }
 };
 */
-async  function  start() {
-  //初始化之前，需要获取到ParameterID的值，然后赋值给lappmodel
-
-  console.log("开始获取配置文件")
-  let url = './live2d/models/a/example.json'
-  let mapper = MocMapper.getInstance(url)
-  let arrayOfparameters = (await mapper).getJsonConfig().parameter;
-  let arrayOfUrl = (await mapper).getJsonConfig().url;
-  //将id值存入map中
-  for (let i = 0; i < arrayOfparameters.length; i++) {
-    let item = arrayOfparameters[i]
-    for (let key in item) {
-      (await mapper).setParameter(key,item[key])
-    }
-  }
-  //将资源路径和url映射关系存入map中
-  for (let i = 0; i < arrayOfUrl.length;i++) {
-    let item = arrayOfUrl[i]
-    for (let key in item) {
-      (await mapper).setParameter(key,item[key])
-    }
-  }
+function  start() {
 
    // create the application instance
    if (LAppDelegate.getInstance().initialize() == false) {
@@ -66,5 +45,22 @@ async  function  start() {
 function stop() {
   LAppDelegate.releaseInstance();
 }
+/**
+ * 根据index来控制切换模型，只能填整数
+ * @param index 模型的次序
+ * 从1开始。 小于0：随机加载
+ * >0加载数组下标为index-1的模型
+ * ==0 加载下一个模型
+ */
+function changeScene(index: number) {
+  let manager = LAppLive2DManager.getInstance();
+  if (index < 0) {
+    manager.randomScene();
+  } else if (index > 0 ) {
+    manager.changeScene(index-1)
+  } else if (index ==0) {
+    manager.nextScene();
+  }
 
-module.exports = { start , stop , resourcesConfig}
+}
+module.exports = { start , stop , changeScene , resourcesConfig}

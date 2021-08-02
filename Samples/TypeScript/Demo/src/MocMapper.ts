@@ -12,14 +12,10 @@ export class MocMapper {
  * 根据url地址获取资源路径和url的映射对象
  * @param url 保存映射关系的json的url地址
  */
-    public static async getInstance(url: string) {
+    public static  getInstance() {
         if (this.mapper == null) {
             this.mapper = new MocMapper();
         }
-        this.mapper.jsonResources = await fetch(url).then(async function (response) {
-            const json = await response.json();
-            return json;
-        })
         return this.mapper;
     }
 
@@ -62,5 +58,32 @@ export class MocMapper {
 
     public getJsonConfig() {
         return this.jsonResources;
+    }
+/**
+ * 从指定url读取模型目录中的mapper.json【自定义的变量映射关系文件】文件
+ * @param url mapper文件的url
+ */
+    public async setMapperJson(url: string) {
+        this.jsonResources = await fetch(url).then(async function (response) {
+            const json = await response.json();
+            return json;
+        })
+        let arrayOfparameters = this.getJsonConfig().parameter;
+        let arrayOfUrl = this.getJsonConfig().url;
+        //将id值存入map中
+        for (let i = 0; i < arrayOfparameters.length; i++) {
+          let item = arrayOfparameters[i]
+          for (let key in item) {
+            this.setParameter(key,item[key])
+          }
+        }
+        //将资源路径和url映射关系存入map中
+        for (let i = 0; i < arrayOfUrl.length;i++) {
+          let item = arrayOfUrl[i]
+          for (let key in item) {
+            this.setParameter(key,item[key])
+          }
+        }
+
     }
 }

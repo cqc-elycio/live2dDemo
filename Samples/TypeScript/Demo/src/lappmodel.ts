@@ -832,7 +832,6 @@ export class LAppModel extends CubismUserModel {
 
     this._hitArea = new csmVector<csmRect>();
     this._userArea = new csmVector<csmRect>();
-    console.log("准备查询id")
     let mapper = MocMapper.mapper;
     if (mapper != null) {
       this._idParamAngleX = CubismFramework.getIdManager().getId(
@@ -873,7 +872,7 @@ export class LAppModel extends CubismUserModel {
         CubismDefaultParameterId.ParamBodyAngleX
       );
     }
-
+ 
     this._state = LoadStep.LoadAssets;
     this._expressionCount = 0;
     this._textureCount = 0;

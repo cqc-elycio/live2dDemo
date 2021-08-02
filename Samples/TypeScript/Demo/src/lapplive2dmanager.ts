@@ -8,7 +8,7 @@
 import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
 import { ACubismMotion } from '@framework/motion/acubismmotion';
 import { csmVector } from '@framework/type/csmvector';
-
+import { MocMapper}from './MocMapper'
 import * as LAppDefine from './lappdefine';
 import { canvas } from './lappdelegate';
 import { LAppModel } from './lappmodel';
@@ -215,7 +215,7 @@ export class LAppLive2DManager {
    * シーンを切り替える
    * サンプルアプリケーションではモデルセットの切り替えを行う。
    */
-  public changeScene(index: number): void {
+  public  async changeScene(index: number): Promise<void> {
     this._sceneIndex = index;
     if (LAppDefine.DebugLogEnable) {
       LAppPal.printMessage(`[APP]model index: ${this._sceneIndex}`);
@@ -229,6 +229,9 @@ export class LAppLive2DManager {
     let modelJsonName: string = LAppDefine.resourcesConfig.getModelNames()[index];
     modelJsonName += '.model3.json';
 
+    let mapperJsonOfModel = modelPath + 'mapper.json';
+    let mapper = MocMapper.getInstance();
+    await mapper.setMapperJson(mapperJsonOfModel)
     this.releaseAllModel();
     this._models.pushBack(new LAppModel());
     this._models.at(0).loadAssets(modelPath, modelJsonName);

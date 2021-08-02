@@ -57,7 +57,6 @@ export class CubismIdManager {
         return result;
       }
       result = new CubismId(id);
-      console.log('注册ID：'+id)
       this._ids.pushBack(result);
     } else {
       return this.registerId(id.s);
