@@ -61,6 +61,8 @@ function changeScene(index: number) {
   } else if (index ==0) {
     manager.nextScene();
   }
+  
+
 
 }
 module.exports = { start , stop , changeScene , resourcesConfig}

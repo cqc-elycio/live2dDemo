@@ -71,7 +71,7 @@ class ResourceConfig {
     }
     
     public setXscal(scal:number) {  this.x_scal = scal }
-    public setYscal(scal:number) {  this.y_scal = scal}
+    public setYscal(scal:number) {  this.y_scal = scal }
     public getXscal() { return this.x_scal }
     public getYscal() { return this.y_scal}
 

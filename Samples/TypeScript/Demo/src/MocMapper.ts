@@ -1,6 +1,7 @@
 /**
  * 将Moc文件中的id值和资源文件名称及对应的url映射到程序中
  */
+import {resourcesConfig } from './lappdefine'
 
 export class MocMapper {
     private parameterIdMAp: Map<string, string> = new Map();
@@ -68,6 +69,7 @@ export class MocMapper {
             const json = await response.json();
             return json;
         })
+
         let arrayOfparameters = this.getJsonConfig().parameter;
         let arrayOfUrl = this.getJsonConfig().url;
         //将id值存入map中
@@ -84,6 +86,11 @@ export class MocMapper {
             this.setParameter(key,item[key])
           }
         }
+
+        //设置模型的中心位置
+        let centerPointScal = this.getJsonConfig().center;
+        resourcesConfig.setXscal(centerPointScal[0]);
+        resourcesConfig.setYscal(centerPointScal[1]);
 
     }
 }
