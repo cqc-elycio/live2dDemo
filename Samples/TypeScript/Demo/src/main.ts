@@ -7,34 +7,17 @@
 
 import { LAppDelegate } from './lappdelegate';
 import { resourcesConfig} from './lappdefine';
-import { LAppLive2DManager} from './lapplive2dmanager'
-/**
- * ブラウザロード後の処理
- */
+import { LAppLive2DManager } from './lapplive2dmanager'
+import {Banner} from './banners';
 
 
-/**
- * 終了時の処理
- */
+function printVersion() {
+  console.log("欢迎使用 MeiDou 前端看板娘")
+  Banner.printBanner();
+}
 
-/**
- * 
- * @returns 下一步解决判定点与模型中心的不一致的问题（牵扯到图形学的内容，没接触过，可能需要另辟蹊径）
-
-*/
-
-
-/**
- * Process when changing screen size.
- 
-window.onresize = () => {
-  if (LAppDefine.CanvasSize === 'auto') {
-    LAppDelegate.getInstance().onResize();
-  }
-};
-*/
 function  start() {
-
+  printVersion()
    // create the application instance
    if (LAppDelegate.getInstance().initialize() == false) {
     return;
@@ -62,6 +45,7 @@ function changeScene(index: number) {
     manager.nextScene();
   }
   
+
 
 
 }

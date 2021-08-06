@@ -51,6 +51,7 @@ class ResourceConfig {
 
     public setModelNames(models:string[]) {
         this.modelNames = models;
+        this.setModelSize();
     }
 
     public setModelSize() {
@@ -91,11 +92,6 @@ export const GearImageName = '';
 // 終了ボタン
 export const PowerImageName = '';
 
-// モデル定義---------------------------------------------
-// モデルを配置したディレクトリ名の配列
-// ディレクトリ名とmodel3.jsonの名前を一致させておくこと
-//export const ModelDir: string[] = ['Haru', 'Hiyori', 'Mark', 'Natori', 'Rice'];
-//export const ModelDirSize: number = ModelDir.length;
 
 // 外部定義ファイル（json）と合わせる
 export const MotionGroupIdle = 'Idle'; // アイドリング

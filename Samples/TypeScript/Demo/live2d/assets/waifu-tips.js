@@ -19,6 +19,9 @@ String.prototype.render = function (context) {
     });
 };
 
+
+//live2dLoader对象
+var loader = live2dLoader;
 var re = /x/;
 console.log(re);
 re.toString = function() {
@@ -173,81 +176,80 @@ function hideMessage(timeout){
     window.setTimeout(function() {sessionStorage.removeItem('waifu-text')}, timeout);
     $('.waifu-tips').delay(timeout).fadeTo(200, 0);
 }
+/**
+ * 
+ * @param {存放所有live2d模型的目录url} waifuPath 
+ * @param {waifu_tips.json文件的url} waifuTipsPath 
+ * @param {一个数组，存放你所有看板娘的名字}waifuNames
+ */
 
-function initModel(waifuPath){
+function initModel(waifuPath,waifuNames,waifuTipsPath){
     
-    if (waifuPath === undefined) waifuPath = '';
-    var modelId = localStorage.getItem('modelId');
-    var modelTexturesId = localStorage.getItem('modelTexturesId');
-    
-    if (modelId == null) {
-        
-        /* 首次访问加载 指定模型 的 指定材质 */
-        
-        var modelId = 1;            // 模型 ID
-        var modelTexturesId = 53    // 材质 ID
-        
+    if (waifuPath === undefined) {
+        console.log("你没有输入那些看板娘们的地址，帮不了你")
+        return
     }
-    loadModel(modelId, modelTexturesId);
-	
-	$.ajax({
-        cache: true,
-        url:'./live2d/assets/waifu-tips.json',
-        dataType: "json",
-        success: function (result){
-            $.each(result.mouseover, function (index, tips){
-                $(document).on("mouseover", tips.selector, function (){
-                    var text = tips.text;
-                    if(Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1)-1];
-                    text = text.render({text: $(this).text()});
-                    showMessage(text, 3000);
+    if (waifuNames === undefined) {
+        console.log("你连你二次元老婆的名字都不说，人家怎么帮你找嘛~~")
+        return
+    }
+    loadModel(waifuPath, waifuNames);
+
+    if (waifuTipsPath != undefined) {
+        $.ajax({
+            cache: true,
+            url: waifuTipsPath,
+            dataType: "json",
+            success: function (result) {
+                $.each(result.mouseover, function (index, tips) {
+                    $(document).on("mouseover", tips.selector, function () {
+                        var text = tips.text;
+                        if (Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1) - 1];
+                        text = text.render({ text: $(this).text() });
+                        showMessage(text, 3000);
+                    });
                 });
-            });
-            $.each(result.click, function (index, tips){
-                $(document).on("click", tips.selector, function (){
-                    var text = tips.text;
-                    if(Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1)-1];
-                    text = text.render({text: $(this).text()});
-                    showMessage(text, 3000, true);
+                $.each(result.click, function (index, tips) {
+                    $(document).on("click", tips.selector, function () {
+                        var text = tips.text;
+                        if (Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1) - 1];
+                        text = text.render({ text: $(this).text() });
+                        showMessage(text, 3000, true);
+                    });
                 });
-            });
-            $.each(result.seasons, function (index, tips){
-                var now = new Date();
-                var after = tips.date.split('-')[0];
-                var before = tips.date.split('-')[1] || after;
+                $.each(result.seasons, function (index, tips) {
+                    var now = new Date();
+                    var after = tips.date.split('-')[0];
+                    var before = tips.date.split('-')[1] || after;
                 
-                if((after.split('/')[0] <= now.getMonth()+1 && now.getMonth()+1 <= before.split('/')[0]) && 
-                   (after.split('/')[1] <= now.getDate() && now.getDate() <= before.split('/')[1])){
-                    var text = tips.text;
-                    if(Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1)-1];
-                    text = text.render({year: now.getFullYear()});
-                    showMessage(text, 6000, true);
-                }
-            });
-        }
-    });
+                    if ((after.split('/')[0] <= now.getMonth() + 1 && now.getMonth() + 1 <= before.split('/')[0]) &&
+                        (after.split('/')[1] <= now.getDate() && now.getDate() <= before.split('/')[1])) {
+                        var text = tips.text;
+                        if (Array.isArray(tips.text)) text = tips.text[Math.floor(Math.random() * tips.text.length + 1) - 1];
+                        text = text.render({ year: now.getFullYear() });
+                        showMessage(text, 6000, true);
+                    }
+                });
+            }
+        });
+    }
+
+
 }
 
-function loadModel(modelId, modelTexturesId){
-    localStorage.setItem('modelId', modelId);
-    if (modelTexturesId === undefined) modelTexturesId = 0;
-    localStorage.setItem('modelTexturesId', modelTexturesId);
+function loadModel(resourcePath, modelNames){
+    live2dLoader.resourcesConfig.setResourcesPath(resourcePath)
+    live2dLoader.resourcesConfig.setModelNames(modelNames)
     live2dLoader.start();
 }
 
 function loadRandModel() {
     //随机加载mod
-    var modelId = localStorage.getItem('modelId');
-    var modelTexturesId = localStorage.getItem('modelTexturesId');
-    var modelTexturesRandMode = 'rand';     // 可选 'rand'(随机), 'switch'(顺序)
-    live2dLoader.changelive2d();
+    live2dLoader.changeScene(-1);
 }
 
 function loadOtherModel() {
-    //加载下一个mod
-    var modelId = localStorage.getItem('modelId');
     
-    var modelTexturesRandMode = 'switch';     // 可选 'rand'(随机), 'switch'(顺序)
-    live2dLoader.changelive2d(-1);
+    live2dLoader.changeScene(0);
    
 }

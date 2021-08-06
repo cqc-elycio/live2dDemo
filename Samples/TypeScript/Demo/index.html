@@ -25,13 +25,14 @@
 <script src="../../../Core/live2dcubismcore.js"></script>
   <!-- Build script -->
   <script src = "./dist/bundle.js"></script>
-  <script src="live2d/assets/waifu-tips.js"></script>
+  <script src="./live2d/assets/waifu-tips.js"></script>
   <script type="text/javascript">
-    var loader  = live2dLoader 
-    loader.resourcesConfig.setResourcesPath("./live2d/models/")
-    loader.resourcesConfig.setModelNames(['a','b'])
-    loader.start();
-    console.log(loader)
+    //必选参数
+    let modulesPath = "./live2d/models/"
+    let modelNames = ['a','b']  //注意，这里的名字是存放你模型文件的主目录的名字，目录中的moc3.json文件的名字一定要与目录同名
+    //可选参数
+    let waifuTipsUrl = "./live2d/assets/waifu-tips.json"
+    initModel(modulesPath,modelNames,waifuTipsUrl);
   </script>
 </body>
 </html>

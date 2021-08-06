@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/main.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'meidou_live2d.js',
     publicPath: '/dist/',
     library: 'live2dLoader',
     libraryTarget:'umd'
