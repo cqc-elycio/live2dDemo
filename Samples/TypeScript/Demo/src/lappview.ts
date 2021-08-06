@@ -5,17 +5,16 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { Live2DCubismFramework as cubismMatrix44 } from '@framework/math/cubismmatrix44';
-import { Live2DCubismFramework as cubismviewmatrix } from '@framework/math/cubismviewmatrix';
-import Csm_CubismViewMatrix = cubismviewmatrix.CubismViewMatrix;
-import Csm_CubismMatrix44 = cubismMatrix44.CubismMatrix44;
-import { TouchManager } from './touchmanager';
+import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
+import { CubismViewMatrix } from '@framework/math/cubismviewmatrix';
+
+import * as LAppDefine from './lappdefine';
+import { canvas, gl, LAppDelegate } from './lappdelegate';
 import { LAppLive2DManager } from './lapplive2dmanager';
-import { LAppDelegate, canvas, gl } from './lappdelegate';
+import { LAppPal } from './lapppal';
 import { LAppSprite } from './lappsprite';
 import { TextureInfo } from './lapptexturemanager';
-import { LAppPal } from './lapppal';
-import * as LAppDefine from './lappdefine';
+import { TouchManager } from './touchmanager';
 
 /**
  * 描画クラス。
@@ -33,10 +32,10 @@ export class LAppView {
     this._touchManager = new TouchManager();
 
     // デバイス座標からスクリーン座標に変換するための
-    this._deviceToScreen = new Csm_CubismMatrix44();
+    this._deviceToScreen = new CubismMatrix44();
 
     // 画面の表示の拡大縮小や移動の変換を行う行列
-    this._viewMatrix = new Csm_CubismViewMatrix();
+    this._viewMatrix = new CubismViewMatrix();
   }
 
   /**
@@ -44,18 +43,28 @@ export class LAppView {
    */
   public initialize(): void {
     const { width, height } = canvas;
-
-    const ratio: number = height / width;
-    const left: number = LAppDefine.ViewLogicalLeft;
-    const right: number = LAppDefine.ViewLogicalRight;
-    const bottom: number = -ratio;
-    const top: number = ratio;
+    //长宽比
+    const ratio: number = width / height;
+    
+    const left: number = -ratio;
+    const right: number = ratio;
+    const bottom: number = LAppDefine.ViewLogicalLeft;
+    const top: number = LAppDefine.ViewLogicalRight;
 
     this._viewMatrix.setScreenRect(left, right, bottom, top); // デバイスに対応する画面の範囲。 Xの左端、Xの右端、Yの下端、Yの上端
+    //放大人物模型
+    this._viewMatrix.scale(LAppDefine.ViewScale, LAppDefine.ViewScale);
 
-    const screenW: number = Math.abs(left - right);
-    this._deviceToScreen.scaleRelative(screenW / width, -screenW / width);
-    this._deviceToScreen.translateRelative(-width * 0.5, -height * 0.5);
+    this._deviceToScreen.loadIdentity();
+    if (width > height) {
+      const screenW: number = Math.abs(right - left);
+      //控制你鼠标位置映射成程序内部位置坐标时的倍率，可以简单理解为控制人物模型的反应速度
+      this._deviceToScreen.scaleRelative(screenW / width, -screenW / width);
+    } else {
+      const screenH: number = Math.abs(top - bottom);
+      this._deviceToScreen.scaleRelative(screenH / height, -screenH / height);
+    }
+    this._deviceToScreen.translateRelative(-width*0.5, -height * 0.5);
 
     // 表示範囲の設定
     this._viewMatrix.setMaxScale(LAppDefine.ViewMaxScale); // 限界拡張率
@@ -94,16 +103,11 @@ export class LAppView {
   public render(): void {
     gl.useProgram(this._programId);
 
-    if (this._back) {
-      this._back.render(this._programId);
-    }
-    if (this._gear) {
-      this._gear.render(this._programId);
-    }
-
     gl.flush();
 
     const live2DManager: LAppLive2DManager = LAppLive2DManager.getInstance();
+
+    live2DManager.setViewMatrix(this._viewMatrix);
 
     live2DManager.onUpdate();
   }
@@ -116,9 +120,8 @@ export class LAppView {
     const height: number = canvas.height;
 
     const textureManager = LAppDelegate.getInstance().getTextureManager();
-    const resourcesPath = LAppDefine.ResourceInfo.resourcesPath;
+    const resourcesPath = LAppDefine.resourcesConfig.getResourcesPath();
 
-    
 
     // シェーダーを作成
     if (this._programId == null) {
@@ -161,7 +164,7 @@ export class LAppView {
   public onTouchesEnded(pointX: number, pointY: number): void {
     // タッチ終了
     const live2DManager: LAppLive2DManager = LAppLive2DManager.getInstance();
-    live2DManager.onDrag(0.0, 0.0);
+    //live2DManager.onDrag(0.0, 0.0);
 
     {
       // シングルタップ
@@ -176,6 +179,7 @@ export class LAppView {
         LAppPal.printMessage(`[APP]touchesEnded x: ${x} y: ${y}`);
       }
       live2DManager.onTap(x, y);
+
     }
   }
 
@@ -185,6 +189,7 @@ export class LAppView {
    * @param deviceX デバイスX座標
    */
   public transformViewX(deviceX: number): number {
+    
     const screenX: number = this._deviceToScreen.transformX(deviceX); // 論理座標変換した座標を取得。
     return this._viewMatrix.invertTransformX(screenX); // 拡大、縮小、移動後の値。
   }
@@ -217,8 +222,8 @@ export class LAppView {
   }
 
   _touchManager: TouchManager; // タッチマネージャー
-  _deviceToScreen: Csm_CubismMatrix44; // デバイスからスクリーンへの行列
-  _viewMatrix: Csm_CubismViewMatrix; // viewMatrix
+  _deviceToScreen: CubismMatrix44; // デバイスからスクリーンへの行列
+  _viewMatrix: CubismViewMatrix; // viewMatrix
   _programId: WebGLProgram; // シェーダID
   _back: LAppSprite; // 背景画像
   _gear: LAppSprite; // ギア画像

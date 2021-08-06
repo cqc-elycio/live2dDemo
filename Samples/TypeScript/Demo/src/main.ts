@@ -6,41 +6,47 @@
  */
 
 import { LAppDelegate } from './lappdelegate';
-//模型文件等信息的配置类
-import { ResourceInfo } from './lappdefine';
-import { LAppLive2DManager } from './lapplive2dmanager';
+import { resourcesConfig} from './lappdefine';
+import { LAppLive2DManager } from './lapplive2dmanager'
+import {Banner} from './banners';
 
 
-/**
- * 开始加载live2d
- * @returns void
- */
-function start() {
-  // create the application instance
-  if (LAppDelegate.getInstance().initialize() == false) {
-    return
+function printVersion() {
+  console.log("欢迎使用 MeiDou 前端看板娘")
+  Banner.printBanner();
+}
+
+function  start() {
+  printVersion()
+   // create the application instance
+   if (LAppDelegate.getInstance().initialize() == false) {
+    return;
   }
-
   LAppDelegate.getInstance().run();
 }
- /**
-  * 只是释放live2d的渲染程序，并不会直接在页面中关闭live2d
-  */
+
 function stop() {
   LAppDelegate.releaseInstance();
 }
-function changelive2d(index: number) {
-  const live2dManager = LAppLive2DManager.getInstance();
-  if (index == null) {//如果没有传入数字，则随机切换live2d模型
-    live2dManager.randomScene()
-  } else {
-    if (index < 0) {
-      live2dManager.nextScene();
-    } else {
-      let indexOfModel = Math.floor(index) % ResourceInfo.moduleDirNames.length
-      live2dManager.changeScene(indexOfModel);
-    }
+/**
+ * 根据index来控制切换模型，只能填整数
+ * @param index 模型的次序
+ * 从1开始。 小于0：随机加载
+ * >0加载数组下标为index-1的模型
+ * ==0 加载下一个模型
+ */
+function changeScene(index: number) {
+  let manager = LAppLive2DManager.getInstance();
+  if (index < 0) {
+    manager.randomScene();
+  } else if (index > 0 ) {
+    manager.changeScene(index-1)
+  } else if (index ==0) {
+    manager.nextScene();
   }
-}
+  
 
-module.exports = {start,stop,ResourceInfo,changelive2d}
+
+
+}
+module.exports = { start , stop , changeScene , resourcesConfig}

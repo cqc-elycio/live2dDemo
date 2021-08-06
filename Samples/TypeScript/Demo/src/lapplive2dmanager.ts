@@ -5,17 +5,14 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { Live2DCubismFramework as cubismmatrix44 } from '@framework/math/cubismmatrix44';
-import { Live2DCubismFramework as csmvector } from '@framework/type/csmvector';
-import { Live2DCubismFramework as acubismmotion } from '@framework/motion/acubismmotion';
-import Csm_csmVector = csmvector.csmVector;
-import Csm_CubismMatrix44 = cubismmatrix44.CubismMatrix44;
-import ACubismMotion = acubismmotion.ACubismMotion;
-
+import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
+import { ACubismMotion } from '@framework/motion/acubismmotion';
+import { csmVector } from '@framework/type/csmvector';
+import { MocMapper}from './MocMapper'
+import * as LAppDefine from './lappdefine';
+import { canvas } from './lappdelegate';
 import { LAppModel } from './lappmodel';
 import { LAppPal } from './lapppal';
-import { canvas } from './lappdelegate';
-import * as LAppDefine from './lappdefine';
 
 export let s_instance: LAppLive2DManager = null;
 
@@ -86,7 +83,6 @@ export class LAppLive2DManager {
   public onDrag(x: number, y: number): void {
     for (let i = 0; i < this._models.getSize(); i++) {
       const model: LAppModel = this.getModel(i);
-
       if (model) {
         model.setDragging(x, y);
       }
@@ -95,11 +91,12 @@ export class LAppLive2DManager {
 
   /**
    * 画面をタップした時の処理
-   *
+   *官方的点击测试部位，由于更改后判定位置出现错误，放弃使用
+   * 
    * @param x 画面のX座標
    * @param y 画面のY座標
    */
-  public onTap(x: number, y: number): void {
+  public onDefaultTap(x: number, y: number): void {
     if (LAppDefine.DebugLogEnable) {
       LAppPal.printMessage(
         `[APP]tap point: {x: ${x.toFixed(2)} y: ${y.toFixed(2)}}`
@@ -127,52 +124,68 @@ export class LAppLive2DManager {
             LAppDefine.PriorityNormal,
             this._finishedMotion
           );
-      }//这里我们接着源码的分支结构再加个分支就行
-            
-      else{//当以上事件都不是时，我们可以在这里自定义自己的点击触发事件，x[-无穷,+无穷]  y [-无穷,+无穷]
-        //代表点击的是模型的canvas所在区域
-        if(x > -1 && x<1&&y<1&&y>-1){ 
-            //但只有点击canvas区域才有效，有效范围为 x[-1,1]  y [-1,1]
-            console.log("--------lapplive2dmanager.ts ---  您点击到了canvas区域-------");
-            if(x > -0.20 && x < 0.20 && y>0.20 && y< 0.65){
-                //这里是头部区域，在下方设置对应表情动作
-                console.log("--------lapplive2dmanager.ts ---  您点击到了人物的头部区域-------");
-                //this._models.at(i).setRandomExpression();
-                //这个常量是我自己定义的，忘记加上了
-                this._models.at(i).startRandomMotion(LAppDefine.MotionGroupTapHead, LAppDefine.PriorityNormal);
-            }
-
-            if(x > -0.20 && x < 0.20 && y>-1.0 && y< 0.1){
-                //这里是身体区域，设置对应动作
-                console.log("--------lapplive2dmanager.ts ---  您点击到了人物的身体区域-------");
-                this._models.at(i).startRandomMotion(LAppDefine.MotionGroupTapBody, LAppDefine.PriorityNormal);
-            }
-
-        }
-    }
+      }
     }
   }
+
+
+
+
+  /**
+   * 更改xy中心位置后，无法用统一的方式判定头和身体了
+   *我们这里全部修改为点击身体部位
+   * @param x 画面のX座標
+   * @param y 画面のY座標
+   */
+   public onTap(x: number, y: number): void {
+    if (LAppDefine.DebugLogEnable) {
+      LAppPal.printMessage(
+        `[APP]tap point: {x: ${x.toFixed(2)} y: ${y.toFixed(2)}}`
+      );
+    }
+
+    for (let i = 0; i < this._models.getSize(); i++) {
+      if (x > -1 && x < 1 && y > -1 && y < 1) {
+        this._models
+        .at(i)
+        .startRandomMotion(
+          LAppDefine.MotionGroupTapBody,
+          LAppDefine.PriorityNormal,
+          this._finishedMotion
+        );  
+      }
+       
+    }
+  }
+
+
 
   /**
    * 画面を更新するときの処理
    * モデルの更新処理及び描画処理を行う
    */
   public onUpdate(): void {
-    let projection: Csm_CubismMatrix44 = new Csm_CubismMatrix44();
-
     const { width, height } = canvas;
-    projection.scale(1.0, width / height);
 
-    if (this._viewMatrix != null) {
-      projection.multiplyByMatrix(this._viewMatrix);
-    }
-
-    const saveProjection: Csm_CubismMatrix44 = projection.clone();
+    const projection: CubismMatrix44 = new CubismMatrix44();
     const modelCount: number = this._models.getSize();
 
     for (let i = 0; i < modelCount; ++i) {
       const model: LAppModel = this.getModel(i);
-      projection = saveProjection.clone();
+      if (model.getModel()) {
+        if (model.getModel().getCanvasWidth() > 1.0 && width < height) {
+          // 横に長いモデルを縦長ウィンドウに表示する際モデルの横サイズでscaleを算出する
+          model.getModelMatrix().setWidth(2.0);
+          projection.scale(1.0, width / height);
+        } else {
+          projection.scale(height / width, 1.0);
+        }
+
+        // 必要があればここで乗算
+        if (this._viewMatrix != null) {
+          projection.multiplyByMatrix(this._viewMatrix);
+        }
+      }
 
       model.update();
       model.draw(projection); // 参照渡しなのでprojectionは変質する。
@@ -184,26 +197,27 @@ export class LAppLive2DManager {
    * サンプルアプリケーションではモデルセットの切り替えを行う。
    */
   public nextScene(): void {
-    const no: number = (this._sceneIndex + 1) % LAppDefine.ResourceInfo.moduleDirNames.length;
+    const no: number = (this._sceneIndex + 1) % LAppDefine.resourcesConfig.getModelSize();
     this.changeScene(no);
   }
 
-  //设置随机显示模型
-  public randomScene(): void
-  {
+  
+  /**
+   * 随机加载模型 
+   */
+   public randomScene(): void {
       //设置随机的模型选项
-      let randomNum= Math.random()*(LAppDefine.ResourceInfo.moduleDirNames.length+1)//取值范围[0,size+1)包含小数
+      let randomNum= Math.random()*(LAppDefine.resourcesConfig.getModelSize()+1)//取值范围[0,size+1)包含小数
       //转为整数后再次取余防止出现数组越界问题
-      let indexOfModel = Math.floor(randomNum)%LAppDefine.ResourceInfo.moduleDirNames.length
+      let indexOfModel = Math.floor(randomNum)%LAppDefine.resourcesConfig.getModelSize()
       this.changeScene(indexOfModel);
   }
-
 
   /**
    * シーンを切り替える
    * サンプルアプリケーションではモデルセットの切り替えを行う。
    */
-  public changeScene(index: number): void {
+  public  async changeScene(index: number): Promise<void> {
     this._sceneIndex = index;
     if (LAppDefine.DebugLogEnable) {
       LAppPal.printMessage(`[APP]model index: ${this._sceneIndex}`);
@@ -212,29 +226,37 @@ export class LAppLive2DManager {
     // ModelDir[]に保持したディレクトリ名から
     // model3.jsonのパスを決定する。
     // ディレクトリ名とmodel3.jsonの名前を一致させておくこと。
-    const model: string = LAppDefine.ResourceInfo.moduleDirNames[index];
-    const modelPath: string = LAppDefine.ResourceInfo.resourcesPath + model + '/';
-    let modelJsonName: string = LAppDefine.ResourceInfo.moduleDirNames[index];
+    const model: string = LAppDefine.resourcesConfig.getModelNames()[index];
+    const modelPath: string = LAppDefine.resourcesConfig.getResourcesPath() + model + '/';
+    let modelJsonName: string = LAppDefine.resourcesConfig.getModelNames()[index];
     modelJsonName += '.model3.json';
 
+    let mapperJsonOfModel = modelPath + 'mapper.json';
+    let mapper = MocMapper.getInstance();
+    await mapper.setMapperJson(mapperJsonOfModel)
     this.releaseAllModel();
     this._models.pushBack(new LAppModel());
     this._models.at(0).loadAssets(modelPath, modelJsonName);
+  }
+
+  public setViewMatrix(m: CubismMatrix44) {
+    for (let i = 0; i < 16; i++) {
+      this._viewMatrix.getArray()[i] = m.getArray()[i];
+    }
   }
 
   /**
    * コンストラクタ
    */
   constructor() {
-    this._viewMatrix = new Csm_CubismMatrix44();
-    this._models = new Csm_csmVector<LAppModel>();
+    this._viewMatrix = new CubismMatrix44();
+    this._models = new csmVector<LAppModel>();
     this._sceneIndex = 0;
-    //this.changeScene(this._sceneIndex);
-    this.randomScene();
+    this.changeScene(this._sceneIndex);
   }
 
-  _viewMatrix: Csm_CubismMatrix44; // モデル描画に用いるview行列
-  _models: Csm_csmVector<LAppModel>; // モデルインスタンスのコンテナ
+  _viewMatrix: CubismMatrix44; // モデル描画に用いるview行列
+  _models: csmVector<LAppModel>; // モデルインスタンスのコンテナ
   _sceneIndex: number; // 表示するシーンのインデックス値
   // モーション再生終了のコールバック関数
   _finishedMotion = (self: ACubismMotion): void => {
