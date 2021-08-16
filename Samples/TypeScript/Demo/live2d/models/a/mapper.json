@@ -30,5 +30,6 @@
             "textures/texture_00.png": "textures/texture_00.png"
         }
     ],
-    "center":[2,1]
+    "center":[1,0.5],
+    "model_scal":2
 }

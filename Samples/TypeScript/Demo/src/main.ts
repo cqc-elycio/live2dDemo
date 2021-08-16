@@ -13,7 +13,7 @@ import {Banner} from './banners';
 
 function printVersion() {
   console.log("欢迎使用 MeiDou 前端看板娘")
-  Banner.printBanner();
+  //Banner.printBanner();
 }
 
 function  start() {

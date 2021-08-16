@@ -4,9 +4,11 @@
 import {resourcesConfig } from './lappdefine'
 
 export class MocMapper {
-    private parameterIdMAp: Map<string, string> = new Map();
-    private resourcesPathToUrlMap = new Map();
-    private jsonResources = null;
+    public parameterIdMAp: Map<string, string> = new Map();
+    public resourcesPathToUrlMap = new Map();
+    public jsonResources = null;
+    //模型的放大倍率
+    public scal = 1;
     public static mapper: MocMapper = null;
 
 /**
@@ -50,6 +52,7 @@ export class MocMapper {
 
 /**
  *  根据资源路径获取url
+ * 主要用于映射上传到对象存储服务器的文件与实际中的目录结构
  * @param resourcesPath 资源路径
  * @returns 
  */
@@ -60,6 +63,12 @@ export class MocMapper {
     public getJsonConfig() {
         return this.jsonResources;
     }
+
+    /**
+     * 获取模型的放大倍率
+     * @returns 缩放倍率
+     */
+    public getScal() { return this.scal}
 /**
  * 从指定url读取模型目录中的mapper.json【自定义的变量映射关系文件】文件
  * @param url mapper文件的url
@@ -72,6 +81,7 @@ export class MocMapper {
 
         let arrayOfparameters = this.getJsonConfig().parameter;
         let arrayOfUrl = this.getJsonConfig().url;
+        
         //将id值存入map中
         for (let i = 0; i < arrayOfparameters.length; i++) {
           let item = arrayOfparameters[i]
@@ -91,6 +101,13 @@ export class MocMapper {
         let centerPointScal = this.getJsonConfig().center;
         resourcesConfig.setXscal(centerPointScal[0]);
         resourcesConfig.setYscal(centerPointScal[1]);
+        //模型的缩放倍率
+        let model_scal = this.getJsonConfig().model_scal;
+        if (model_scal == undefined || model_scal <= 0 || model_scal>50) {
+            model_scal = 1;
+        }
+        this.scal = model_scal;
+        resourcesConfig.setModelScal(model_scal);
 
     }
 }

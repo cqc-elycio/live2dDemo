@@ -30,12 +30,17 @@ export const ViewLogicalMaxBottom = -2.0;
 export const ViewLogicalMaxTop = 2.0;
 
 class ResourceConfig {
+    //模型资源路径
     public resourcesPath: string;
+    //在模型目录中想要现实的模型文件夹名字
     public modelNames: string[];
     public modelSize: number;
+    //显示live2d模型的canvas的id
     public canvasId: string = 'live2d';
     public x_scal: number = 2;
-    public y_scal:number = 1
+    public y_scal: number = 1;
+    //模型的缩放比例
+    public model_scal: number = 1;
     constructor() {
         this.resourcesPath = '../../Resources/';
         this.modelNames = ['Haru', 'Hiyori', 'Mark', 'Natori', 'Rice'];
@@ -49,6 +54,16 @@ class ResourceConfig {
         this.canvasId = canvasId;
    }
 
+  
+    public setModelScal(scal: number) {
+        this.model_scal = scal;
+    }
+
+    public getModelScal() {
+        return this.model_scal
+    }
+    
+    
     public setModelNames(models:string[]) {
         this.modelNames = models;
         this.setModelSize();
