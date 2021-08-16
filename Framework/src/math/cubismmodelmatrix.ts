@@ -28,9 +28,9 @@ export class CubismModelMatrix extends CubismMatrix44 {
     this._width = w !== undefined ? w : 0.0;
     this._height = h !== undefined ? h : 0.0;
     
-    let consumer_sacle = resourcesConfig.getModelScal();
+    let consumer_sacle = resourcesConfig.getModelScale();
     this.scale(consumer_sacle,consumer_sacle);
-    this.setCenterPosition(consumer_sacle*w*resourcesConfig.getXscal()/2, consumer_sacle*h*resourcesConfig.getYscal()/2);
+    this.setCenterPosition(consumer_sacle*w*resourcesConfig.getXscale()/2, consumer_sacle*h*resourcesConfig.getYscale()/2);
   }
 
   /**

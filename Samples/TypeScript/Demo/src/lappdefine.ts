@@ -37,10 +37,10 @@ class ResourceConfig {
     public modelSize: number;
     //显示live2d模型的canvas的id
     public canvasId: string = 'live2d';
-    public x_scal: number = 2;
-    public y_scal: number = 1;
+    public x_scale: number = 2;
+    public y_scale: number = 1;
     //模型的缩放比例
-    public model_scal: number = 1;
+    public model_scale: number = 1;
     constructor() {
         this.resourcesPath = '../../Resources/';
         this.modelNames = ['Haru', 'Hiyori', 'Mark', 'Natori', 'Rice'];
@@ -55,12 +55,12 @@ class ResourceConfig {
    }
 
   
-    public setModelScal(scal: number) {
-        this.model_scal = scal;
+    public setModelScale(scale: number) {
+        this.model_scale = scale;
     }
 
-    public getModelScal() {
-        return this.model_scal
+    public getModelScale() {
+        return this.model_scale
     }
     
     
@@ -86,10 +86,10 @@ class ResourceConfig {
        return  this.canvasId
     }
     
-    public setXscal(scal:number) {  this.x_scal = scal }
-    public setYscal(scal:number) {  this.y_scal = scal }
-    public getXscal() { return this.x_scal }
-    public getYscal() { return this.y_scal}
+    public setXscale(scale:number) {  this.x_scale = scale }
+    public setYscale(scale:number) {  this.y_scale = scale }
+    public getXscale() { return this.x_scale }
+    public getYscale() { return this.y_scale}
 
 }
 

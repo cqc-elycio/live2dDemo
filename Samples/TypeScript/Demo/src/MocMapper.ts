@@ -8,7 +8,7 @@ export class MocMapper {
     public resourcesPathToUrlMap = new Map();
     public jsonResources = null;
     //模型的放大倍率
-    public scal = 1;
+    public scale = 1;
     public static mapper: MocMapper = null;
 
 /**
@@ -68,7 +68,7 @@ export class MocMapper {
      * 获取模型的放大倍率
      * @returns 缩放倍率
      */
-    public getScal() { return this.scal}
+    public getScale() { return this.scale}
 /**
  * 从指定url读取模型目录中的mapper.json【自定义的变量映射关系文件】文件
  * @param url mapper文件的url
@@ -99,15 +99,15 @@ export class MocMapper {
 
         //设置模型的中心位置
         let centerPointScal = this.getJsonConfig().center;
-        resourcesConfig.setXscal(centerPointScal[0]);
-        resourcesConfig.setYscal(centerPointScal[1]);
+        resourcesConfig.setXscale(centerPointScal[0]);
+        resourcesConfig.setYscale(centerPointScal[1]);
         //模型的缩放倍率
-        let model_scal = this.getJsonConfig().model_scal;
-        if (model_scal == undefined || model_scal <= 0 || model_scal>50) {
-            model_scal = 1;
+        let model_scale = this.getJsonConfig().model_scale;
+        if (model_scale == undefined || model_scale <= 0 || model_scale>50) {
+            model_scale = 1;
         }
-        this.scal = model_scal;
-        resourcesConfig.setModelScal(model_scal);
+        this.scale = model_scale;
+        resourcesConfig.setModelScale(model_scale);
 
     }
 }
