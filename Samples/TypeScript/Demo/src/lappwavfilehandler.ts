@@ -121,6 +121,21 @@ export class LAppWavFileHandler {
       this._byteReader._fileSize = this._byteReader._fileByte.byteLength;
       this._byteReader._readOffset = 0;
 
+        //将arraybuffer对象转为audio
+        const audioContext = new window.AudioContext();
+        // 控制音频
+        const audioSource = audioContext.createBufferSource()
+        const gainNode = audioContext.createGain();
+        audioContext.decodeAudioData(this._byteReader._fileByte, function(buffer){
+          audioSource.buffer = buffer;
+          // 设置音量为 [0,1]
+         gainNode.gain.value = 1
+          audioSource.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          // 播放
+          audioSource.start()
+        })
+/*
       // 如果文件加载失败，或者没有大小的开头签名“RIFF”，则失败。
       if (
         this._byteReader._fileByte == null ||
@@ -217,24 +232,13 @@ export class LAppWavFileHandler {
             this._pcmData[channelCount][sampleCount] = this.getPcmSample();
           }
         }
-           //将arraybuffer对象转为audio
-           const audioContext = new window.AudioContext();
-           // 控制音频
-           const audioSource = audioContext.createBufferSource()
-           const gainNode = audioContext.createGain();
-           audioContext.decodeAudioData(this._byteReader._fileByte, function(buffer){
-             audioSource.buffer = buffer;
-             // 设置音量为 [0,1]
-            gainNode.gain.value = 1
-             audioSource.connect(gainNode);
-             gainNode.connect(audioContext.destination);
-             // 播放
-             audioSource.start()
-           })
+         
         ret = true;
       } catch (e) {
         console.log(e);
       }
+      */
+      ret = true;
     })();
 
     return ret;

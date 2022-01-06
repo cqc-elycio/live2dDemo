@@ -8,6 +8,7 @@
     "clean": "rimraf dist"
   },
   "devDependencies": {
+    "@types/node": "^16.11.10",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "eslint": "^6.8.0",

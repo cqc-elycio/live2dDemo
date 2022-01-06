@@ -1,6 +1,4 @@
-
 var path = require('path');
-
 module.exports = {
   mode: 'production',
   target: ['web', 'es5'],
@@ -12,6 +10,7 @@ module.exports = {
     library: 'live2dLoader',
     libraryTarget:'umd'
   },
+  
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {

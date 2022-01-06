@@ -8,11 +8,12 @@
 import { LAppDelegate } from './lappdelegate';
 import { resourcesConfig} from './lappdefine';
 import { LAppLive2DManager } from './lapplive2dmanager'
-import {Banner} from './banners';
-
-
+import { Banner } from './banners';
+//const Live2DCubismCore = require("../../../../Core/live2dcubismcore")
 function printVersion() {
   console.log("欢迎使用 MeiDou 前端看板娘")
+  console.log("项目开源地址：https://github.com/cqc233/live2dDemo")
+  console.log("如果觉得项目对你有用，可以请开发者喝瓶快乐水：https://www.ashesone.top/upload/2021/09/%E6%94%B6%E6%AC%BE%E7%A0%81-cd69a558456143419b585acb2a405a6e.jpg")
   //Banner.printBanner();
 }
 
@@ -49,4 +50,4 @@ function changeScene(index: number) {
 
 
 }
-module.exports = { start , stop , changeScene , resourcesConfig}
+module.exports = { start , stop , changeScene , resourcesConfig }

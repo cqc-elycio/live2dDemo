@@ -11,7 +11,6 @@ import { CubismBlendMode } from '../rendering/cubismrenderer';
 import { csmMap } from '../type/csmmap';
 import { csmVector } from '../type/csmvector';
 import { CSM_ASSERT } from '../utils/cubismdebug';
-
 /**
  * モデル
  *

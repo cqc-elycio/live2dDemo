@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "declaration": true,
@@ -13,7 +14,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "../Core/*.ts"
+    "../Core/*.ts",
+    "**/*.js"
   ],
   "exclude": [
     "node_modules",

@@ -69,6 +69,7 @@ export class LAppTextureManager {
 
     // データのオンロードをトリガーにする
     const img = new Image();
+    img.crossOrigin = 'anonymous'
     img.onload = (): void => {
       // テクスチャオブジェクトの作成
       const tex: WebGLTexture = gl.createTexture();
@@ -111,6 +112,7 @@ export class LAppTextureManager {
 
       callback(textureInfo);
     };
+   
     img.src = fileName;
   }
 

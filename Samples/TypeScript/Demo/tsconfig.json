@@ -3,6 +3,7 @@
     "target": "es5",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "allowJs": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
@@ -15,7 +16,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../../Core/*.ts"
+    "../../../Core/*.ts",
+    "**/*.js"
   ],
   "exclude": [
     "node_modules",

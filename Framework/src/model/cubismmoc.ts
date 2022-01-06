@@ -7,7 +7,6 @@
 
 import { CSM_ASSERT } from '../utils/cubismdebug';
 import { CubismModel } from './cubismmodel';
-
 /**
  * Mocデータの管理
  *
