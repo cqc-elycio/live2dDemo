@@ -1,0 +1,56 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "mia1.moc3",
+		"Textures": [
+			"mia1.8192/texture_00.png"
+		],
+		"Physics": "mia1.physics3.json",
+		"DisplayInfo": "mia1.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "1.exp3.json",
+				"File": "1.exp3.json"
+			},
+			{
+				"Name": "2.exp3.json",
+				"File": "2.exp3.json"
+			},
+			{
+				"Name": "3.exp3.json",
+				"File": "3.exp3.json"
+			},
+			{
+				"Name": "4.exp3.json",
+				"File": "4.exp3.json"
+			},
+			{
+				"Name": "5.exp3.json",
+				"File": "5.exp3.json"
+			},
+			{
+				"Name": "6.exp3.json",
+				"File": "6.exp3.json"
+			}
+		]
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": [
+				"ParamMouthForm",
+				"ParamMouthOpenY"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		}
+	],
+	"HitAreas": []
+}

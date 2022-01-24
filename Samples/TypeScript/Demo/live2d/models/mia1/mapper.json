@@ -1,0 +1,25 @@
+{
+    "parameter": [
+        {
+            "ParamAngleX": "ParamAngleX"
+        },
+        {
+            "ParamAngleY": "ParamAngleY"
+        },
+        {
+            "ParamAngleZ": "ParamAngleZ"
+        },
+        {
+            "ParamEyeBallX": "ParamEyeBallX"
+        },
+        {
+            "ParamBodyAngleX": "ParamBodyAngleX"
+        },
+        {
+            "ParamEyeBallY": "ParamEyeBallY"
+        }
+    ],
+    "url": [],
+    "center":[1,0.35],
+    "model_scale":1.5
+}

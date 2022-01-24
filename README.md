@@ -19,10 +19,7 @@
   点开main.ts文件，里面有注释，使用文件里面暴露的接口进行自定义设置
 设置完成后，在前端界面调用live2dLoader.start()启动
 剩下的参照index.html配置即可
-如果你的模型不会随鼠标动，请参考 Samples\TypeScript\Demo\live2d\models\a\example.json对id参数进行配置
-
-## 注意事项
-项目处于开发阶段，正在进行调试
+如果你的模型不会随鼠标动，请参考 Samples\TypeScript\Demo\live2d\models\mia1\mapper.json对id参数进行配置
 
 
 ## 开发环境
@@ -54,4 +51,10 @@
 | Windows | Microsoft Edge | 90.0.818.66 |
 | Windows | Mozilla Firefox | 88.0.1 |
 
-Note: 由于我没有研究官方对核心库的授权方式，故没有加上开源协议，我把官方的LICENSE拷贝过来了
+Note: 由于我没有研究官方对核心库的授权方式，故没有加上开源协议，把官方的LICENSE拷贝过来了
+
+## 特别鸣谢
+
+- 感谢**Live2D官方**提供的[WEB DEMO](https://github.com/Live2D/CubismWebSamples) 
+- 感谢BiliBili的UP主**星图司史**免费提供的模型，模型所有权归其所有，[链接地址](https://www.bilibili.com/video/BV1iP4y1n7UA)
+
